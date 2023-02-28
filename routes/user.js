@@ -30,6 +30,14 @@ router.post("/adduser", ({ body }, res) => {
     password: body.password,
     role: body.role,
     userid: body.userid,
+    accounts: [
+      {
+        accountName: body.accounts[0].accountName,
+        clientName: body.accounts[0].clientName,
+        manager: body.accounts[0].manager,
+        team: body.accounts[0].team,
+      },
+    ],
   });
   newUser.save((err) => {
     if (!err) {
@@ -64,7 +72,6 @@ router.post("/getuserdata", ({ body }, res) => {
 
 //Update User
 router.post("/updateuser", ({ body }, res) => {
-  console.log(body);
   UserModel.findOneAndUpdate(
     {
       userid: body.userid,
@@ -73,6 +80,14 @@ router.post("/updateuser", ({ body }, res) => {
       name: body.name,
       email: body.email,
       password: body.password,
+      accounts: [
+        {
+          accountName: body.accounts[0].accountName,
+          clientName: body.accounts[0].clientName,
+          manager: body.accounts[0].manager,
+          team: body.accounts[0].team,
+        },
+      ],
     },
     (err) => {
       if (!err) {
@@ -97,4 +112,21 @@ router.post("/deleteuser", ({ body }, res) => {
       }
     }
   );
+});
+//Login User
+router.post("/login-user", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const check = await UserModel.findOne({
+      email: email,
+      password: password,
+    });
+    if (check) {
+      res.json(check);
+    } else {
+      res.json("notexist");
+    }
+  } catch (error) {
+    res.json("notexist");
+  }
 });
